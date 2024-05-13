@@ -6,10 +6,10 @@ from environs import Env
 @dataclass
 class DatabaseConfig:
     database: str  # Название базы данных
-    db_host: str  # URL-адрес базы данных
     db_user: str  # Username пользователя базы данных
     db_password: str  # Пароль к базе данных
-    db_port: str  # Порт базы данных
+    db_host: str = '127.0.0.1'  # URL-адрес базы данных
+    db_port: str = '5432'  # Порт базы данных
 
     @property
     def db_url(self):
