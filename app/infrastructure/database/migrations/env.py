@@ -37,7 +37,7 @@ target_metadata = Base.metadata
 config1: Config = load_config_from_file()
 config.set_main_option(
     "sqlalchemy.url",
-    config1.db.construct_sqlalchemy_url(host='localhost', port=5430)
+    config1.db.construct_sqlalchemy_url(port=5430)
 )
 
 

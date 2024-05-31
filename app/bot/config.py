@@ -13,7 +13,7 @@ class DatabaseConfig:
     host: str  # URL-адрес базы данных
     port: str = None  # Порт базы данных
 
-    def construct_sqlalchemy_url(self, driver="psycopg", host=None, port=None) -> str:
+    def construct_sqlalchemy_url(self, driver="psycopg", host=None, port=5430) -> str:
         if not host:
             host = self.host
         if not port:
