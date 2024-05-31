@@ -9,4 +9,4 @@ async def set_main_menu(bot: Bot):
     ]
 
     await bot.delete_my_commands()
-    return bot.set_my_commands(main_menu_commands)
+    return await bot.set_my_commands(main_menu_commands)
