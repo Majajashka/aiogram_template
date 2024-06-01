@@ -13,7 +13,7 @@ class DatabaseConfig:
     host: str  # URL-адрес базы данных
     port: str = None  # Порт базы данных
 
-    def construct_sqlalchemy_url(self, driver="psycopg", host=None, port=5430) -> str:
+    def construct_sqlalchemy_url(self, driver="psycopg", host=None, port=None) -> str:
         if not host:
             host = self.host
         if not port:
@@ -37,16 +37,11 @@ class TgBot:
 
 @dataclass
 class RedisConfig:
-    redis_pass: str
-    redis_port: int
     redis_host: str
 
     @property
     def url(self) -> str:
-        if self.redis_pass:
-            return f"redis://:{self.redis_pass}@{self.redis_host}:{self.redis_port}/0"
-        else:
-            return f"redis://{self.redis_host}:{self.redis_port}/0"
+        return f"redis://{self.redis_host}/0"
 
 
 @dataclass
@@ -72,8 +67,6 @@ def load_config_from_file(path: str | None = None) -> Config:
             password=env('POSTGRES_PASSWORD'),
             port=env('DB_PORT', None)),
         redis=RedisConfig(
-            redis_pass=env.str("REDIS_PASSWORD", None),
-            redis_port=env.int("REDIS_PORT"),
             redis_host=env.str("REDIS_HOST", None)
         )
     )
@@ -93,8 +86,6 @@ def load_config_from_env() -> Config:
             port=os.getenv('POSTGRES_PORT', 5432)
         ),
         redis=RedisConfig(
-            redis_pass=os.getenv('REDIS_PASSWORD'),
-            redis_port=int(os.getenv('REDIS_PORT')),
             redis_host=os.getenv('REDIS_HOST')
         )
     )

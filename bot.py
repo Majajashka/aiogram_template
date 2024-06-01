@@ -28,8 +28,6 @@ async def main() -> None:
     config: Config = load_config_from_env()
     t_hub: TranslatorHub = translator_hub()
 
-    logger.info(config.db.construct_sqlalchemy_url())
-
     storage = RedisStorage.from_url(
         config.redis.url,
         key_builder=DefaultKeyBuilder(with_bot_id=True, with_destiny=True),
@@ -39,7 +37,7 @@ async def main() -> None:
               default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=storage)
 
-    async_engine = create_async_engine(config.db.construct_sqlalchemy_url(driver='psycopg'))
+    async_engine = create_async_engine(config.db.construct_sqlalchemy_url(driver='psycopg', port=5432))
     sessionmaker = async_sessionmaker(async_engine)
 
     dp.workflow_data.update({"_translator_hub": t_hub, "config": config})
@@ -53,8 +51,7 @@ async def main() -> None:
 
     logger.info('Setting menu...')
     if not await set_main_menu(bot):
-        logger.error("Menu setting failed")
-
+        logger.error("Menu setting failed!")
     await dp.start_polling(bot)
 
 
