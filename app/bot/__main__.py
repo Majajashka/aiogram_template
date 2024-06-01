@@ -37,7 +37,8 @@ async def main() -> None:
               default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=storage)
 
-    async_engine = create_async_engine(config.db.construct_sqlalchemy_url(driver='psycopg', port=5432))
+    logger.info(config.db.construct_sqlalchemy_url())
+    async_engine = create_async_engine(config.db.construct_sqlalchemy_url())
     sessionmaker = async_sessionmaker(async_engine)
 
     dp.workflow_data.update({"_translator_hub": t_hub, "config": config})
