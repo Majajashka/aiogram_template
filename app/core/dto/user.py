@@ -5,11 +5,11 @@ from app.core.dto.base import Base
 
 
 class User(Base):
-    id: int
-    active: bool = None
+    tg_id: int
+    is_active: bool = None
     language: str = None
+    is_banned: bool = None
     created_at: datetime = None
-    updated_at: datetime = None
 
 
 @dataclass

@@ -20,10 +20,10 @@ async def start(message: Message, i18n: TranslatorRunner, repo: HolderRepo):
     user = await get_user_by_id(message.from_user.id, repo.users)
     if not user:
         user_dto = User(
-            id=message.from_user.id
+            tg_id=message.from_user.id
         )
         user = await create_user(user_dto, repo.users)
         logger.info(
-            f'New user created: {message.from_user.first_name} - User ID: {user.id}, Active: {user.active},'
+            f'New user created: {message.from_user.first_name} - User ID: {user.tg_id}, Active: {user.is_active},'
             f' Language: {user.language}'
         )

@@ -18,13 +18,13 @@ class UserRepo(BaseRepo[UserOrm]):
         saved_user = await self.session.execute(
             insert(UserOrm)
             .values(
-                id=user.id,
+                tg_id=user.tg_id,
             )
             .returning(UserOrm)
         )
         return saved_user.scalar_one().to_dto()
 
     async def get_users_count_by_status(self, status: bool = True) -> int:
-        users = await self.session.execute(select(func.count()).where(self.model.active == status))
+        users = await self.session.execute(select(func.count()).where(self.model.is_active == status))
         count = users.scalars().one()
         return count
