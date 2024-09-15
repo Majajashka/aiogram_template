@@ -1,9 +1,10 @@
 from typing import Callable, Awaitable, Dict, Any
 
 from aiogram import BaseMiddleware
-from aiogram.types import TelegramObject
+from aiogram.types import TelegramObject, CallbackQuery, Message
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
+from app.core.service.user import get_or_create_user
 from app.infrastructure.database.holder import HolderRepo
 
 
@@ -21,4 +22,7 @@ class DbSessionMiddleware(BaseMiddleware):
         async with self.session_pool() as session:
             holder = HolderRepo(session=session)
             data['repo'] = holder
-            return await handler(event, data)
+            if isinstance(event, (Message, CallbackQuery)):
+                data['user'] = await get_or_create_user(user_id=event.from_user.id, user_repo=holder.users)
+            await handler(event, data)
+            await session.commit()
