@@ -23,6 +23,6 @@ class DbSessionMiddleware(BaseMiddleware):
             holder = HolderRepo(session=session)
             data['repo'] = holder
             if isinstance(event, (Message, CallbackQuery)):
-                data['user'] = await get_or_create_user(user_id=event.from_user.id, user_repo=holder.users)
+                data['user'] = await get_or_create_user(user_id=event.from_user.id, user_repo=holder.user_repo)
             await handler(event, data)
             await session.commit()

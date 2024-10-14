@@ -8,6 +8,7 @@ from logging.config import fileConfig
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
+from app.bot.config import load_config_from_env
 
 from alembic import context
 
@@ -22,6 +23,8 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+config_app = load_config_from_env()
+config.set_main_option('sqlalchemy.url', config_app.db.construct_sqlalchemy_url())
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel

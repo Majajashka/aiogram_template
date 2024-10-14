@@ -24,7 +24,7 @@ admin_router.callback_query.filter(IsAdmin())
 
 @admin_router.message(Command('total'))
 async def total(message: Message, repo: HolderRepo, i18n: TranslatorRunner):
-    count = await get_users_count_by_status(repo.users)
+    count = await get_users_count_by_status(repo.user_repo)
     await message.answer(i18n.total(total_users_count=str(count.active+count.inactive),
                                     active_users_count=str(count.active),
                                     inactive_users_count=str(count.inactive)))
