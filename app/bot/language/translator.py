@@ -2,7 +2,7 @@ from fluent_compiler.bundle import FluentBundle
 from fluentogram import TranslatorHub, FluentTranslator
 
 
-def translator_hub() -> TranslatorHub:
+def setup_translator_hub() -> TranslatorHub:
     t_hub: TranslatorHub = TranslatorHub(
         locales_map={
             'ru': ('ru',)

@@ -3,9 +3,11 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from dishka import Provider, Scope, provide
+from fluentogram import TranslatorHub
 from redis.asyncio import Redis
 
 from app.bot.config.model.bot import BotConfig
+from app.bot.language.translator import setup_translator_hub
 
 
 class BotProvider(Provider):
@@ -25,3 +27,7 @@ class BotProvider(Provider):
     @provide
     async def get_dp(self, storage: RedisStorage) -> Dispatcher:
         return Dispatcher(storage=storage)
+
+    @provide
+    async def get_i18n(self) -> TranslatorHub:
+        return setup_translator_hub()
