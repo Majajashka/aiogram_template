@@ -21,7 +21,8 @@ class DbSessionMiddleware(BaseMiddleware):
         async with data['dishka_container']() as di:
             holder = await di.get(HolderRepo)
             if isinstance(event, (Message, CallbackQuery)):
-                data['user'] = await get_or_create_user(user_id=event.from_user.id, user_repo=holder.user_repo)
+                if event.from_user:
+                    data['user'] = await get_or_create_user(user_id=event.from_user.id, user_repo=holder.user_repo)
             try:
                 await handler(event, data)
                 await holder.session.commit()
