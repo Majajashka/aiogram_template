@@ -1,5 +1,15 @@
+from pathlib import Path
+
 from fluent_compiler.bundle import FluentBundle
 from fluentogram import TranslatorHub, FluentTranslator
+
+
+def get_ftl_files(locale: str) -> list[Path]:
+    dir_path = Path(f'app/bot/language/locales/{locale}/')
+
+    ftl_files = [file for file in dir_path.glob('*.ftl') if file.is_file()]
+
+    return ftl_files
 
 
 def setup_translator_hub() -> TranslatorHub:
@@ -11,7 +21,7 @@ def setup_translator_hub() -> TranslatorHub:
             FluentTranslator(
                 locale='ru',
                 translator=FluentBundle.from_files(
-                    'ru-RU', filenames=["app/bot/language/locales/ru/user.ftl", 'app/bot/language/locales/ru/admin.ftl'],
+                    'ru-RU', filenames=get_ftl_files(locale='ru'),
                     use_isolating=False
                 )
             )
