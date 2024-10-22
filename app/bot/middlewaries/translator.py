@@ -12,7 +12,7 @@ class TranslatorMD(BaseMiddleware):
             event: TelegramObject,
             data: Dict[str, Any],
     ) -> Any:
-        di = await data['dishka_container']
+        di = data['dishka_container']
         hub = await di.get(TranslatorHub)
         data['i18n'] = hub.get_translator_by_locale('ru')
         return await handler(event, data)

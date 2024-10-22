@@ -11,4 +11,4 @@ class BotProvider(Provider):
 
     @provide
     async def get_bot(self, config: BotConfig) -> Bot:
-        return Bot(token=config.token, default=DefaultBotProperties(ParseMode.HTML))
+        return Bot(token=config.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))

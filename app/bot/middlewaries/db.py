@@ -18,8 +18,8 @@ class DbSessionMiddleware(BaseMiddleware):
             event: TelegramObject,
             data: Dict[str, Any],
     ) -> Any:
-        async with data['dishka_container'] as di:
-            holder = di.get(HolderRepo)
+        async with data['dishka_container']() as di:
+            holder = await di.get(HolderRepo)
             if isinstance(event, (Message, CallbackQuery)):
                 data['user'] = await get_or_create_user(user_id=event.from_user.id, user_repo=holder.user_repo)
             try:
