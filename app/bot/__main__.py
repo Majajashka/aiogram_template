@@ -1,58 +1,30 @@
 import asyncio
 import logging
 
-from aiogram import Dispatcher, Bot
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
-from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
-from fluentogram import TranslatorHub
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from dishka.integrations.aiogram import setup_dishka as setup_aiogram_dishka
 
-from app.bot.handlers import admin, basic
-from app.bot.language.translator import translator_hub
-from app.bot.middlewaries.db import DbSessionMiddleware
-from app.bot.middlewaries.translator import TranslatorMD
-from app.bot.config import Config, load_config_from_env
+from aiogram import Bot, Dispatcher
+
+from app.bot.factory import setup_di
 from app.bot.keyboards.set_menu import set_main_menu
+from app.bot.setup import setup_logging
 
 logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(filename)s:%(lineno)d #%(levelname)-8s '
-               '[%(asctime)s] - %(name)s - %(message)s')
+    setup_logging()
     logger.info('Starting bot...')
 
-    config: Config = load_config_from_env()
-    t_hub: TranslatorHub = translator_hub()
+    logger.info('Setuping IoC...')
+    di = setup_di()
+    bot = await di.get(Bot)
+    dp = await di.get(Dispatcher)
+    setup_aiogram_dishka(container=di, router=dp, auto_inject=True)
 
-    storage = RedisStorage.from_url(
-        config.redis.url,
-        key_builder=DefaultKeyBuilder(with_bot_id=True, with_destiny=True),
-    )
-
-    bot = Bot(token=config.tg_bot.token,
-              default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    dp = Dispatcher(storage=storage)
-
-    logger.info(config.db.construct_sqlalchemy_url())
-    async_engine = create_async_engine(config.db.construct_sqlalchemy_url())
-    sessionmaker = async_sessionmaker(async_engine)
-
-    dp.workflow_data.update({"_translator_hub": t_hub, "config": config})
-
-    logger.info('Including routers...')
-    dp.include_routers(basic.basic_router, admin.admin_router)
-
-    logger.info('Including middlewaries...')
-    dp.update.middleware(DbSessionMiddleware(session_pool=sessionmaker))
-    dp.update.middleware(TranslatorMD())
-
-    logger.info('Setting menu...')
-    if not await set_main_menu(bot):
-        logger.error("Menu setting failed!")
+    logger.info('Setting up menu...')
+    await set_main_menu(bot)
+    logger.info('Starting polling...')
     await dp.start_polling(bot)
 
 
