@@ -16,7 +16,7 @@ async def main() -> None:
     setup_logging()
     logger.info('Starting bot...')
 
-    logger.info('Setuping IoC...')
+    logger.info('Setting up IoC...')
     di = setup_di()
     bot = await di.get(Bot)
     dp = await di.get(Dispatcher)
